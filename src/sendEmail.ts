@@ -5,7 +5,7 @@ import { SMTP, microServiceSecret } from './config'
 
 import { IncomingMessage, ServerResponse } from 'http'
 import { Address } from 'nodemailer/lib/mailer'
-import { json, RequestHandler } from 'micro'
+import { json, RequestHandler, createError, sendError } from 'micro'
 import { verify as jwtVerify } from 'jsonwebtoken'
 import { SendEmailObj } from './types'
 
@@ -28,28 +28,22 @@ export const formatUserEmail = (userEmail: string | Address): string =>
  */
 const sendEmail = async ({ from, to, subject, content: html }: SendEmailObj): Promise<object> => {
   try {
-    return nodemailer.createTransport(SMTP).sendMail({
+    const res = await nodemailer.createTransport(SMTP).sendMail({
       from: formatUserEmail(from),
       to: formatUserEmail(to),
       subject,
       html
     })
+    return res
   } catch (err) {
-    throw new Error('Could not send email.')
+    console.log(SMTP, {
+      from: formatUserEmail(from),
+      to: formatUserEmail(to),
+      subject,
+      html
+    })
+    throw createError(500, 'Could not send email.', err)
   }
-}
-
-/**
- * Get a JSON error object to send back to the client
- * @param res Server response handler
- * @param error Error message
- * @param httpCode Error message
- */
-const sendError = (res: ServerResponse, error: string | Error, httpCode?: number): void => {
-  const err = JSON.stringify({ error })
-  console.error(err)
-  res.statusCode = httpCode || 500
-  res.end(err)
 }
 
 /**
@@ -68,36 +62,34 @@ export const getParams = async (
   // Get JSON parameters
   try {
     body = await json(req)
-  } catch (e) {
-    sendError(res, `Invalid JSON was sent.`, 400)
-    return
+  } catch (err) {
+    throw createError(400, `Invalid JSON was sent.`, err)
   }
 
   // Check every parameters are present
-  if (!neededParams.every(param => body.hasOwnProperty(param))) {
-    sendError(res, `Missing parameter(s). Needed Parameter(s) : [${neededParams.toString()}].`, 400)
-    return
-  }
+  if (!neededParams.every(param => body.hasOwnProperty(param)))
+    throw createError(400, 'Missing parameters')
+
   return body
 }
 
 const handler: RequestHandler = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Content-Type', 'application/json')
-
-  // Check POST method
-  if (req.method !== 'POST') {
-    res.statusCode = 400
-    res.end()
-    return
-  }
-
   try {
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Content-Type', 'application/json')
+
+    // Check POST method
+    if (req.method !== 'POST') throw createError(400, 'Invalid HTTP method')
+
     const neededParams: Array<string> = ['token', 'from', 'to', 'subject', 'content']
-    const { token, from, to, content, subject }: any = await getParams(req, res, neededParams)
+    const { token, from, to, subject, content }: any = await getParams(req, res, neededParams)
 
     // Check provided token is valid
-    jwtVerify(token, microServiceSecret)
+    try {
+      jwtVerify(token, microServiceSecret)
+    } catch (err) {
+      throw createError(401, 'Invalid JSON Web Token.', err)
+    }
 
     const sent = await sendEmail({ from, to, subject, content })
 
@@ -105,7 +97,7 @@ const handler: RequestHandler = async (req, res) => {
     res.statusCode = 200
     res.end(JSON.stringify(sent))
   } catch (err) {
-    return sendError(res, err, 500)
+    sendError(req, res, err)
   }
 }
 
