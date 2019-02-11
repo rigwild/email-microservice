@@ -47,7 +47,7 @@ const sendEmail = async ({ from, to, subject, content: html }: SendEmailObj): Pr
  */
 const sendError = (res: ServerResponse, error: string | Error, httpCode?: number): void => {
   const err = JSON.stringify({ error })
-  console.log(err)
+  console.error(err)
   res.statusCode = httpCode || 500
   res.end(err)
 }
@@ -69,7 +69,7 @@ export const getParams = async (
   try {
     body = await json(req)
   } catch (e) {
-    sendError(res, `Invalid JSON was sent.`, 409)
+    sendError(res, `Invalid JSON was sent.`, 400)
     return
   }
 
@@ -105,7 +105,6 @@ const handler: RequestHandler = async (req, res) => {
     res.statusCode = 200
     res.end(JSON.stringify(sent))
   } catch (err) {
-    console.log(err)
     return sendError(res, err, 500)
   }
 }
