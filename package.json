@@ -18,12 +18,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "dotenv-safe": "^6.1.0",
     "jsonwebtoken": "^8.4.0",
     "nodemailer": "^5.1.1"
   },
   "devDependencies": {
-    "@types/dotenv-safe": "^5.0.3",
     "@types/jsonwebtoken": "^8.3.0",
     "@types/micro": "^7.3.3",
     "@types/nodemailer": "^4.6.5",

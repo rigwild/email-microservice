@@ -10,5 +10,13 @@
       "dest": "src/sendEmail.ts"
     }
   ],
+  "env": {
+    "micro_service_secret": "@email_microservice_secret",
+    "smtp_host": "@smtp_host",
+    "smtp_port": "@smtp_port",
+    "smtp_secure": "@smtp_secure",
+    "smtp_user": "@smtp_user",
+    "smtp_pass": "@smtp_pass"
+  },
   "alias": "asauvage-fr-email-microservice.now.sh"
 }

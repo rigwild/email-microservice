@@ -1,11 +1,5 @@
 import { SmtpCredentials } from './types'
 
-import { config as loadEnv } from 'dotenv-safe'
-loadEnv({
-  path: __dirname + '/../.env',
-  example: __dirname + '/../.env.example'
-})
-
 /** You SMTP credentials */
 export const SMTP: SmtpCredentials = {
   host: process.env.smtp_host || '',
@@ -18,4 +12,6 @@ export const SMTP: SmtpCredentials = {
 }
 
 /** The microservice secret used to verify a request token is valid */
-export const microServiceSecret: string = process.env.microServiceSecret || 'no-secret'
+export const microServiceSecret: string = process.env.micro_service_secret || ''
+
+if (microServiceSecret === '') throw 'The `micro_service_secret` env variable was not set.'

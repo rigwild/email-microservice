@@ -36,7 +36,7 @@ const sendEmail = async ({ from, to, subject, content: html }: SendEmailObj): Pr
     })
     return res
   } catch (err) {
-    console.log(SMTP, {
+    console.error(SMTP, {
       from: formatUserEmail(from),
       to: formatUserEmail(to),
       subject,
