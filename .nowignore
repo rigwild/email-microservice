@@ -1,0 +1,5 @@
+node_modules
+dist
+src/index.ts
+src/config.default.ts
+src/generateToken.ts

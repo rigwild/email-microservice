@@ -1,0 +1,14 @@
+{
+  "name": "email-microservice",
+  "version": 2,
+  "builds": [
+    { "src": "src/sendEmail.ts", "use": "@now/node@canary" }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "src/sendEmail.ts"
+    }
+  ],
+  "alias": "asauvage-fr-email-microservice.now.sh"
+}

@@ -1,0 +1,32 @@
+{
+  "name": "email-microservice",
+  "version": "0.1.0",
+  "description": "send emails as a microservice 📧📬",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "start": "cd dist/ && micro index.js",
+    "build": "tsc",
+    
+    "dev": "tsc && cd dist/ && micro index.js",
+    "generateToken": "cd dist/ && node generateToken.js",
+    "deploy": "now && now alias"
+  },
+  "author": "rigwild",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rigwild/email-microservice"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "jsonwebtoken": "^8.4.0",
+    "nodemailer": "^5.1.1"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.3.0",
+    "@types/micro": "^7.3.3",
+    "@types/nodemailer": "^4.6.5",
+    "micro": "^9.3.3",
+    "typescript": "^3.2.2"
+  }
+}
