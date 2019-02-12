@@ -3,7 +3,7 @@
 require('dotenv-safe').config()
 
 const micro = require('micro')
-const { json, createError, sendError } = require('micro')
+const { send, json, createError, sendError } = require('micro')
 
 const email_to = process.env.email_to
 const subject = process.env.email_subject
@@ -24,8 +24,15 @@ const formatUserEmail = userEmail =>
   typeof userEmail === 'string' ? userEmail : `"${userEmail.name}" <${userEmail.address}>`
 
 const server = micro(async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', allowed_origin)
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT')
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+  )
+  if (req.method === 'OPTIONS') return send(res, 200)
+
   try {
-    res.setHeader('Access-Control-Allow-Origin', allowed_origin)
     res.setHeader('Content-Type', 'application/json')
 
     // Check POST method
@@ -57,7 +64,7 @@ const server = micro(async (req, res) => {
 
     console.log(JSON.stringify(result))
 
-    res.end(JSON.stringify(result))
+    send(res, 200, JSON.stringify(result))
   } catch (err) {
     console.error(err)
     sendError(req, res, err)
