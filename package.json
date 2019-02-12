@@ -18,7 +18,7 @@
   "homepage": "https://github.com/rigwild/email-microservice-consume#readme",
   "dependencies": {
     "dotenv-safe": "^6.1.0",
-    "micro": "^9.3.3",
-    "nodemailer": "^5.1.1"
+    "mailgun-js": "^0.22.0",
+    "micro": "^9.3.3"
   }
 }
