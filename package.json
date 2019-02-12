@@ -1,31 +1,24 @@
 {
-  "name": "email-microservice",
-  "version": "0.1.0",
-  "description": "send emails as a microservice 📧📬",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "name": "email-microservice-consume",
+  "version": "1.0.0",
+  "description": "a microservice to consume https://github.com/rigwild/email-microservice securely.",
+  "main": "index.js",
   "scripts": {
-    "start": "cd dist/ && micro index.js",
-    "build": "tsc",
-    "dev": "tsc && cd dist/ && micro index.js",
-    "generateToken": "cd dist/ && node generateToken.js",
-    "deploy": "now && now alias"
+    "start": "node index.js"
   },
-  "author": "rigwild",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rigwild/email-microservice"
+    "url": "git+https://github.com/rigwild/email-microservice-consume.git"
   },
+  "author": "rigwild",
   "license": "MIT",
-  "dependencies": {
-    "jsonwebtoken": "^8.4.0",
-    "nodemailer": "^5.1.1"
+  "bugs": {
+    "url": "https://github.com/rigwild/email-microservice-consume/issues"
   },
-  "devDependencies": {
-    "@types/jsonwebtoken": "^8.3.0",
-    "@types/micro": "^7.3.3",
-    "@types/nodemailer": "^4.6.5",
+  "homepage": "https://github.com/rigwild/email-microservice-consume#readme",
+  "dependencies": {
+    "dotenv-safe": "^6.1.0",
     "micro": "^9.3.3",
-    "typescript": "^3.2.2"
+    "nodemailer": "^5.1.1"
   }
 }
