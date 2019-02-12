@@ -26,24 +26,13 @@ export const formatUserEmail = (userEmail: string | Address): string =>
  * @param {string} content Email content
  * @return {Promise<object>}
  */
-const sendEmail = async ({ from, to, subject, content: html }: SendEmailObj): Promise<object> => {
-  try {
-    const res = await nodemailer.createTransport(SMTP).sendMail({
-      from: formatUserEmail(from),
-      to: formatUserEmail(to),
-      subject,
-      html
-    })
-    return res
-  } catch (err) {
-    console.error(SMTP, {
-      from: formatUserEmail(from),
-      to: formatUserEmail(to),
-      subject,
-      html
-    })
-    throw createError(500, 'Could not send email.', err)
-  }
+const sendEmail = ({ from, to, subject, content: html }: SendEmailObj): Promise<object> => {
+  return nodemailer.createTransport(SMTP).sendMail({
+    from: formatUserEmail(from),
+    to: formatUserEmail(to),
+    subject,
+    html
+  })
 }
 
 /**
@@ -91,12 +80,15 @@ const handler: RequestHandler = async (req, res) => {
       throw createError(401, 'Invalid JSON Web Token.', err)
     }
 
-    const sent = await sendEmail({ from, to, subject, content })
+    const sent = await sendEmail({ from, to, subject, content }).catch(err => {
+      throw createError(500, 'Could not send email.', err)
+    })
 
     console.log('An email request was validated : ', sent)
     res.statusCode = 200
     res.end(JSON.stringify(sent))
   } catch (err) {
+    console.error(err)
     sendError(req, res, err)
   }
 }
