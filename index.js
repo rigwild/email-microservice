@@ -56,7 +56,10 @@ const server = micro(async (req, res) => {
         }),
         to: email_to,
         subject,
-        text: message
+        text: `Date : ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}
+        Nom : ${name}
+        Objet : ${subject},
+        Message : ${message}`
       })
       .catch(err => {
         throw createError(500, 'Could not send email.', err)
