@@ -6,7 +6,6 @@ const micro = require('micro')
 const { send, json, createError, sendError } = require('micro')
 
 const email_to = process.env.email_to
-const subject = process.env.email_subject
 const this_microservice_port = process.env.this_microservice_port
 const allowed_origin = process.env.allowed_origin
 
@@ -14,6 +13,8 @@ const mailgun_api_key = process.env.mailgun_api_key
 const mailgun_domain = process.env.mailgun_domain
 
 const mailgun = require('mailgun-js')({ apiKey: mailgun_api_key, domain: mailgun_domain })
+
+const mailTemplate = require('./mailTemplate')
 
 /**
  * Format user email
@@ -44,8 +45,8 @@ const server = micro(async (req, res) => {
     })
 
     // Get body parameters and check if set
-    const { name, email, message } = body
-    if (![name, email, message].every(x => x)) throw createError(400, 'Missing body parameters.')
+    const { name, email, subject, message } = body
+    if (![name, email, subject, message].every(x => x)) throw createError(400, 'Missing body parameters.')
 
     const result = await mailgun
       .messages()
@@ -55,11 +56,8 @@ const server = micro(async (req, res) => {
           address: email
         }),
         to: email_to,
-        subject,
-        text: `Date : ${new Date().toLocaleString("fr-FR", { timeZone: "Europe/Paris" })}
-        Nom : ${name}
-        Objet : ${subject},
-        Message : ${message}`
+        subject: 'Email reçu depuis le microservice',
+        html: mailTemplate(name, email, subject, message)
       })
       .catch(err => {
         throw createError(500, 'Could not send email.', err)
