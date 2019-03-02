@@ -58,7 +58,7 @@ const server = micro(async (req, res) => {
           name,
           address: email
         }),
-        subject: 'Email reçu depuis le microservice',
+        subject: 'Email envoyé depuis le microservice',
         html: mailTemplate(name, email, subject, message)
       })
       .catch(err => {
