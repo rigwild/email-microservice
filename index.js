@@ -5,6 +5,7 @@ require('dotenv-safe').config()
 const micro = require('micro')
 const { send, json, createError, sendError } = require('micro')
 
+const email_from = process.env.email_from
 const email_to = process.env.email_to
 const this_microservice_port = process.env.this_microservice_port
 const allowed_origin = process.env.allowed_origin
@@ -51,11 +52,12 @@ const server = micro(async (req, res) => {
     const result = await mailgun
       .messages()
       .send({
-        from: formatUserEmail({
+        from: email_from,
+        to: email_to,
+        'h:Reply-To': formatUserEmail({
           name,
           address: email
         }),
-        to: email_to,
         subject: 'Email reçu depuis le microservice',
         html: mailTemplate(name, email, subject, message)
       })
